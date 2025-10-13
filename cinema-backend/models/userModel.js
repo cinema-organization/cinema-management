@@ -1,4 +1,6 @@
 const mongoose=require("mongoose");
+const bcrypt =require("bcryptjs");
+const jwt =require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
     {
@@ -27,5 +29,27 @@ const userSchema = new mongoose.Schema(
     },
     {timestamps:true}
 );
+
+// 🔒 Avant de sauvegarder : hasher le mot de passe
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // si pas modifié, ne pas re-hasher
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// 🧠 Méthode : comparer le mot de passe
+userSchema.methods.comparePassword = async function (passwordEntré) {
+  return await bcrypt.compare(passwordEntré, this.password);
+};
+
+// 🔑 Méthode : générer un token JWT
+userSchema.methods.generateToken = function () {
+  return jwt.sign(
+    { id: this._id, role: this.role },
+    process.env.JWT_SECRET || "secret123",
+    { expiresIn: "1d" } // token valide 1 jour
+  );
+};
 
 module.exports= mongoose.model("User",userSchema);

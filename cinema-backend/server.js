@@ -1,7 +1,7 @@
 const express=require("express");
 const dotenv=require("dotenv");
 const cors=require("cors");
-const connectDB=require("./config/db.js")
+const connectDB=require("./config/db")
 
 dotenv.config();
 
@@ -18,6 +18,11 @@ app.use(cors());
 app.get("/",(req,res)=>{
     res.send("Bienvenue dans le backend du système de cinéma 🎬");
 });
+
+//Routes
+
+app.use("/api/auth", require("./routes/authRoutes"));
+
 
 //lancer le serveur
 const PORT=process.env.PORT ||5000;
