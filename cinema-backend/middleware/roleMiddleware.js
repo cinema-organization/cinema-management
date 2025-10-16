@@ -19,7 +19,7 @@ exports.userOrAdmin = (req, res, next) => {
     return res.status(401).json({ message: "Authentification requise" });
   }
   
-  if (req.user.role !== "user" && req.user.role !== "admin") {
+  if (req.user.role !== "client" && req.user.role !== "admin") {
     return res.status(403).json({ message: "Accès refusé" });
   }
   

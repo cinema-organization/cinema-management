@@ -11,7 +11,7 @@ const {
 const { proteger } = require("../middleware/authMiddleware");
 const { adminOnly } = require("../middleware/roleMiddleware");
 
-// Routes user
+// Routes client
 router.get("/mes-reservations", proteger, getMesReservations);
 router.post("/", proteger, createReservation);
 router.put("/:id/annuler", proteger, annulerReservation);
