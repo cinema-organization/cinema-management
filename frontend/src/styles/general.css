@@ -1,0 +1,119 @@
+/* === Thème sombre CinémaX === */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #000000, #1a0000);
+  color: #f0f0f0;
+  height: 100vh;
+}
+
+/* Centrage global */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-card {
+  background: rgba(20, 20, 20, 0.9);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+  width: 400px;
+  text-align: center;
+  animation: fadeIn 0.6s ease;
+}
+
+.cinemax-title {
+  font-size: 2rem;
+  color: #e50914;
+}
+.cinemax-title span {
+  color: gold;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #f5f5f5;
+}
+
+.auth-form .form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  transition: 0.3s;
+}
+
+input:focus {
+  outline: 2px solid #e50914;
+}
+
+/* Password toggle */
+.password-wrapper {
+  position: relative;
+}
+.toggle-password {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+/* Button */
+.btn-primary {
+  background: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #b00610;
+}
+
+/* Error & redirect */
+.error {
+  color: #ff4b4b;
+  font-size: 0.9rem;
+}
+
+.redirect {
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+.redirect a {
+  color: gold;
+}
+
+/* Password strength */
+.strength {
+  font-size: 0.8rem;
+}
+.weak { color: #ff4b4b; }
+.medium { color: #ffae00; }
+.strong { color: #4caf50; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
