@@ -19,6 +19,7 @@ app.use("/api/films", require("./routes/filmRoutes"));
 app.use("/api/salles", require("./routes/salleRoutes"));
 app.use("/api/seances", require("./routes/seanceRoutes"));
 app.use("/api/reservations", require("./routes/reservationRoutes"));
+app.use('/api/stats', require('./routes/statsRoutes'));
 
 // Route de test
 app.get("/", (req, res) => {

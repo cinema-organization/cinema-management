@@ -1,74 +1,26 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import ProtectedRoute from "./components/ProtectedRoute.jsx"; 
-import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx"; 
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+import Home from "./pages/Home"
+import AdminDashboard from "./pages/AdminDashboard"
+import FilmDetails from "./pages/FilmDetails"
 
-// Importation des pages
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import Home from "./pages/Home.jsx";
-
-const App = () => {
-  // Fix: Cohérent avec reducer "auth"
-  const user = useSelector((state) => state.auth?.user);
-  const isLoggedIn = useSelector((state) => state.auth?.isLoggedIn || false);  // Force false si undefined
-
-  console.log("Utilisateur connecté :", user);
-  console.log("isLoggedIn :", isLoggedIn);
-
+function App() {
   return (
     <Router>
-      <Routes>
-        {/* Pages publiques - Fix: !isLoggedIn pour afficher, sinon /films */}
-        <Route
-          path="/login"
-          element={!isLoggedIn ? <Login /> : <Navigate to="/films" replace />}
-        />
-        <Route
-          path="/register"
-          element={
-            !isLoggedIn ? <Register /> : <Navigate to="/films" replace />
-          }
-        />
-
-        {/* Redirection de la racine - Fix: vers /films si logged, /login sinon */}
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? <Navigate to="/films" replace /> : <Navigate to="/login" replace />
-          }
-        />
-
-        {/* Pages protégées (user) */}
-        <Route
-          path="/films"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Routes admin protégées */}
-        <Route
-          path="/admin/*"
-          element={
-            <AdminProtectedRoute>
-              {/* Tu mettras ici <AdminDashboard /> ou d'autres sous-pages admin */}
-            </AdminProtectedRoute>
-          }
-        />
-
-        {/* Catch-all pour erreurs (ex: /home → /films ou /login) */}
-        <Route
-          path="*"
-          element={
-            isLoggedIn ? <Navigate to="/films" replace /> : <Navigate to="/login" replace />
-          }
-        />
-      </Routes>
+      <div className="app">
+        <main className="main-content">
+          <Routes>
+            <Route path="/films" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/film/:id" element={<FilmDetails />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
-  );
-};
+  )
+}
 
-export default App;
+export default App

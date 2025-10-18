@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../slices/userSlice";  // Utilise le thunk
+import { registerUser } from "../slices/userSlice";
 import "../styles/auth.css";
 
 export default function Register() {
@@ -11,10 +11,12 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [submitted, setSubmitted] = useState(false);  // Nouveau: track si submit a eu lieu
+  const [submitted, setSubmitted] = useState(false);
+  const [localError, setLocalError] = useState("");
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, isLoggedIn } = useSelector((state) => state.auth);  // Ajoute isLoggedIn
+  const { loading, error, isLoggedIn } = useSelector((state) => state.auth);
 
   const checkStrength = (pwd) => {
     if (pwd.length < 6) return "Faible";
@@ -22,23 +24,30 @@ export default function Register() {
     return "Moyenne";
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      // Fix: Utilise un alert ou set local error (pas dispatch type, car pas de reducer setError)
-      alert("❌ Les mots de passe ne correspondent pas.");  // Ou intègre un state local error
-      return;
-    }
-    setSubmitted(true);  // Marque submit
-    dispatch(registerUser({ nom, email, password }));  // Dispatch thunk
+  const handlePasswordChange = (e) => {
+    const pwd = e.target.value;
+    setPassword(pwd);
+    setLocalError(""); // Reset local error quand l'utilisateur tape
   };
 
-  // Nav après succès - Fix: seulement après submitted + succès (isLoggedIn true)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLocalError("");
+
+    if (password !== confirmPassword) {
+      setLocalError("❌ Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    setSubmitted(true);
+    dispatch(registerUser({ nom, email, password }));
+  };
+
   useEffect(() => {
     if (submitted && !loading && !error && isLoggedIn) {
-      navigate("/films");  // Nav seulement après submit réussi
+      navigate("/films");
     } else if (submitted && !loading && error) {
-      setSubmitted(false);  // Reset pour nouveau submit si erreur
+      setSubmitted(false);
     }
   }, [loading, error, isLoggedIn, submitted, navigate]);
 
@@ -48,14 +57,19 @@ export default function Register() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="cinemax-title">Cinéma<span>X</span></h1>
-        <h2>Inscription</h2>
+        <div className="auth-header">
+          <h1 className="cinemax-title">
+            Cinéma<span>X</span>
+          </h1>
+          <h2 className="auth-title">Inscription</h2>
+        </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>Nom complet</label>
+            <label className="form-label">Nom complet</label>
             <input
               type="text"
+              className="form-input"
               placeholder="Votre nom"
               value={nom}
               onChange={(e) => setNom(e.target.value)}
@@ -65,9 +79,10 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label>Email</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
+              className="form-input"
               placeholder="exemple@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -77,19 +92,20 @@ export default function Register() {
           </div>
 
           <div className="form-group password-field">
-            <label>Mot de passe</label>
+            <label className="form-label">Mot de passe</label>
             <div className="password-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="********"
+                className="form-input"
+                placeholder="••••••••"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 required
                 minLength="6"
                 disabled={loading}
               />
-              <span
-                className="toggle-password"
+              <span 
+                className="toggle-password" 
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? "👁️" : "🙈"}
@@ -103,35 +119,41 @@ export default function Register() {
           </div>
 
           <div className="form-group password-field">
-            <label>Confirmer le mot de passe</label>
+            <label className="form-label">Confirmer le mot de passe</label>
             <div className="password-wrapper">
               <input
                 type={showConfirm ? "text" : "password"}
-                placeholder="********"
+                className="form-input"
+                placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
               />
-              <span
-                className="toggle-password"
+              <span 
+                className="toggle-password" 
                 onClick={() => setShowConfirm(!showConfirm)}
               >
-                {showConfirm ? "👁️" : "🙈"}
+                {showConfirm ? "🐵" : "🙈"}
               </span>
             </div>
           </div>
 
-          {error && <p className="error">{error}</p>}
+          {(error || localError) && <p className="error">{error || localError}</p>}
           {loading && <p className="loading">🔄 Inscription en cours...</p>}
 
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? "Inscription..." : "S’inscrire"}
+            {loading ? "Inscription..." : "S'inscrire"}
           </button>
 
-          <p className="redirect">
-            Déjà un compte ? <Link to="/login">Se connecter</Link>
-          </p>
+          <div className="auth-footer">
+            <p className="auth-footer-text">
+              Déjà un compte ?{" "}
+              <Link to="/login" className="auth-footer-link">
+                Se connecter
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>

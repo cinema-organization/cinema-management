@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../slices/userSlice";  // Utilise le thunk
+import { loginUser } from "../slices/userSlice";
 import "../styles/auth.css";
 
 export default function Login() {
@@ -10,35 +10,37 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, user } = useSelector((state) => state.auth);  // Récupère loading/error/user du slice
+  const { loading, error, user } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));  // Dispatch thunk (gère async)
-
-    // Écoute fulfilled via useEffect ou navigate après (ici: écoute state change)
+    dispatch(loginUser({ email, password }));
   };
 
-  // useEffect pour nav après succès (ou écoute dans slice)
-  React.useEffect(() => {
-    if (!loading && !error && user) {  // Succès implicite
+  useEffect(() => {
+    if (!loading && !error && user) {
       const { role } = user;
       if (role === "admin") navigate("/admin/dashboard");
-      else navigate("/films");  // /films pour Home.jsx
+      else navigate("/films");
     }
   }, [loading, error, user, navigate]);
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="cinemax-title">Cinéma<span>X</span></h1>
-        <h2>Connexion</h2>
+        <div className="auth-header">
+          <h1 className="cinemax-title">
+            Cinéma<span>X</span>
+          </h1>
+          <h2 className="auth-title">Connexion</h2>
+        </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>Email</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
+              className="form-input"
               placeholder="exemple@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -48,21 +50,22 @@ export default function Login() {
           </div>
 
           <div className="form-group password-field">
-            <label>Mot de passe</label>
+            <label className="form-label">Mot de passe</label>
             <div className="password-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="********"
+                className="form-input"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
               />
-              <span
-                className="toggle-password"
+              <span 
+                className="toggle-password" 
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "👁️" : "🙈"}
+                {showPassword ? "🐵" : "🙈"}
               </span>
             </div>
           </div>
@@ -74,9 +77,14 @@ export default function Login() {
             {loading ? "Connexion..." : "Se connecter"}
           </button>
 
-          <p className="redirect">
-            Pas encore inscrit ? <Link to="/register">Créer un compte</Link>
-          </p>
+          <div className="auth-footer">
+            <p className="auth-footer-text">
+              Pas encore inscrit ?{" "}
+              <Link to="/register" className="auth-footer-link">
+                Créer un compte
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>
