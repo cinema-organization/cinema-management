@@ -4,11 +4,13 @@ import Register from "./pages/Register"
 import Home from "./pages/Home"
 import AdminDashboard from "./pages/AdminDashboard"
 import FilmDetails from "./pages/FilmDetails"
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <Router>
       <div className="app">
+         <Navbar />
         <main className="main-content">
           <Routes>
             <Route path="/films" element={<Home />} />
