@@ -5,6 +5,7 @@ import Home from "./pages/Home"
 import AdminDashboard from "./pages/AdminDashboard"
 import FilmDetails from "./pages/FilmDetails"
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </Router>
   )
