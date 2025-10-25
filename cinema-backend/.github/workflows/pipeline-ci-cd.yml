@@ -5,8 +5,8 @@ on:
       - dev
 
 env:
-  BUILD_NUMBER: ${{github.run_number}}
-  IMAGE_NAME: ${{vars.DOCKERHUB_USERNAME}}/api-cinema
+  BUILD_NUMBER: ${{ github.run_number }}
+  IMAGE_NAME: ${{ vars.DOCKERHUB_USERNAME }}/api-cinema
   PROJECT_PATH: /home/user/devops-script-cinema/backend/dev
   DOCKER_SERVICE: backend-api 
 
