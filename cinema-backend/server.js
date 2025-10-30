@@ -37,24 +37,27 @@ cron.schedule("*/5 * * * *", async () => {
   console.log("⏰ Vérification automatique des séances...");
 
   try {
-    const now = moment();
-
-    // ✅ 1. Marquer comme "terminée" les séances dont l’heure est passée
-    await Seance.updateMany(
-      { heure: { $lt: now.toDate() }, statut: { $ne: "terminée" } },
+    const now = new Date();
+    const today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+    
+    // ✅ Mise à jour directe sans passer par le save() qui déclenche la validation
+    const result = await Seance.updateMany(
+      {
+        $or: [
+          // Séances avec date passée
+          { date: { $lt: today } },
+          // Séances d'aujourd'hui avec heure passée
+          {
+            date: today,
+            heure: { $lt: now.toTimeString().slice(0, 5) } // Format HH:mm
+          }
+        ],
+        statut: { $ne: "terminée" }
+      },
       { $set: { statut: "terminée" } }
     );
 
-    // ✅ 2. À minuit, marquer les séances terminées de la veille comme "n’est pas visualisé"
-    if (now.hour() === 0 && now.minute() < 5) {
-      await Seance.updateMany(
-        { statut: "terminée" },
-        { $set: { statut: "n’est pas visualisé" } }
-      );
-      console.log("🌙 Les séances terminées sont passées à 'n’est pas visualisé'");
-    }
-
-    console.log("✅ Vérification des séances terminée");
+    console.log(`✅ ${result.modifiedCount} séances mises à jour (terminées)`);
   } catch (error) {
     console.error("❌ Erreur lors de la mise à jour des statuts :", error.message);
   }
