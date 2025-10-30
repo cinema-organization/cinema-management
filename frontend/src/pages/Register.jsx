@@ -59,7 +59,7 @@ export default function Register() {
       <div className="auth-card">
         <div className="auth-header">
           <h1 className="cinemax-title">
-            Cinéma<span>X</span>
+            Ciné<span>Go</span>
           </h1>
           <h2 className="auth-title">Inscription</h2>
         </div>
@@ -108,7 +108,7 @@ export default function Register() {
                 className="toggle-password" 
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "👁️" : "🙈"}
+                {showPassword ? "🐵" : "🙈"}
               </span>
             </div>
             {password && (
