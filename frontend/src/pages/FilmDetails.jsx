@@ -3,11 +3,15 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { getFilmById, createReservation } from "../services/api" // ⚠️ on retire getSeancesByFilm
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "../styles/general.css"
 import "../styles/home.css"
 
 function FilmDetails() {
   const { id } = useParams()
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [film, setFilm] = useState(null)
   const [seances, setSeances] = useState([])
   const [selectedSeance, setSelectedSeance] = useState(null)
@@ -33,25 +37,48 @@ function FilmDetails() {
   }, [id])
 
   const handleReservation = async () => {
+
+    if (!user) {
+    alert("⚠️ Vous devez être connecté pour réserver un film !");
+    navigate("/login");
+    return;
+  }
+
     if (!selectedSeance) {
       alert("Veuillez sélectionner une séance")
       return
     }
 
-    try {
-        console.log("Réservation envoyée :", {
-         seance_id: selectedSeance._id,
-           nombrePlaces,
-            })
-      await createReservation({
-        seance_id: selectedSeance._id, // ⚠️ ton backend utilise _id
-        nombrePlaces,
-      })
-      alert("Réservation effectuée avec succès!")
-    } catch (error) {
-      console.error("Erreur lors de la réservation:", error)
-      alert("Erreur lors de la réservation")
+  try {
+    console.log("Réservation envoyée :", {
+      seance_id: selectedSeance._id,
+      nombrePlaces,
+    });
+
+    const response = await createReservation({
+      seance_id: selectedSeance._id,
+      nombrePlaces,
+    });
+
+    if (response.error) {
+      alert("Erreur : " + response.error);
+      return;
     }
+
+    if (response.status === "error") {
+      alert("❌ " + response.message);
+      return;
+    }
+
+    alert("✅ Réservation effectuée avec succès !");
+  } catch (error) {
+    console.error("Erreur lors de la réservation:", error);
+    if (error.response?.status === 400) {
+      alert("⚠️ Séance complète ou invalide !");
+    } else {
+      alert("Erreur serveur, veuillez réessayer plus tard.");
+    }
+  }
   }
 
   if (loading) {
